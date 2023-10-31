@@ -25,7 +25,6 @@ const commentsRoute = require("./routes/comments");
 const photosRoute = require("./routes/photos");
 const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
-const allowCors = require("./allowCors");
 
 const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
 const corsOptions = {
