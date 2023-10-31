@@ -25,13 +25,14 @@ const commentsRoute = require("./routes/comments");
 const photosRoute = require("./routes/photos");
 const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
+
+const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
 const corsOptions = {
-  origin: "https://poplebook.netlify.app",
+  origin: whiteList,
   credentials: true,
 };
 
 //middlewarres
-app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "25mb" }));
 app.use((req, res, next) => {
