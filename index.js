@@ -7,7 +7,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-//execute the package
+//execute the packagec
+
+const port = process.env.PORT || 5000;
 
 const app = express();
 require("dotenv/config");
@@ -67,4 +69,4 @@ app.get("/", (req, res) => {
 mongoose.connect(process.env.DB_CONNECTION);
 
 //how to we start listening to the server
-app.listen(5000);
+app.listen(port);
