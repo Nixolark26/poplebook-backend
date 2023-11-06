@@ -26,15 +26,33 @@ const photosRoute = require("./routes/photos");
 const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
 
-const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
+const whiteList = [
+  "http://localhost:3000",
+  "https://poplebook.netlify.app",
+  "https://654946da92bb6b37d9b8afd7--serene-taffy-8d0ac4.netlify.app",
+  ,
+  "https://65495c8e48509b0087fbf3c9--storied-pavlova-88e151.netlify.app",
+  "https://6549537d8aef3357d5f97def--super-cendol-7f7241.netlify.app",
+];
 const corsOptions = {
-  origin: whiteList,
   credentials: true,
+  origin: whiteList,
 };
 
 //middlewarres
 app.use(cors(corsOptions));
-app.use(cookieParser());
+app.use(cookieParser("auth", { httpOnly: true }));
+app.get("/", (req, res) => {
+  res.cookie("exampleCookie", "exampleValue", {
+    maxAge: 24 * 60 * 60 * 1000, // Expires in 24 hours
+    httpOnly: true, // Make the cookie accessible only via HTTP
+    secure: true, // Only send the cookie over HTTPS
+    sameSite: "None", // Allow cross-site or third-party cookies
+  });
+  res.send("cookie set");
+  console.log("saving");
+  console.log(req.cookies);
+});
 app.use(bodyParser.json({ limit: "25mb" }));
 app.use((req, res, next) => {
   const isRegisterEndpoint = req.url === "/users" && req.method === "POST";
@@ -42,9 +60,9 @@ app.use((req, res, next) => {
     next();
     return;
   }
+  console.log(req.cookies);
 
   const googleID = req?.cookies?.googleId;
-  console.log(req.cookies);
   if (!googleID) return res.status(401).json({ message: "Unauthorized" });
   next();
 });
