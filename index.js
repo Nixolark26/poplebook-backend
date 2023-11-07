@@ -32,6 +32,8 @@ const whiteList = [
   "https://654946da92bb6b37d9b8afd7--serene-taffy-8d0ac4.netlify.app",
   "https://65495c8e48509b0087fbf3c9--storied-pavlova-88e151.netlify.app",
   "https://6549537d8aef3357d5f97def--super-cendol-7f7241.netlify.app",
+  "https://654a4a9f1aa1093748a91cc7--cheerful-kashata-d27ea7.netlify.app",
+  "https://654a49a371ad243616ea1599--stupendous-cat-edfc31.netlify.app",
 ];
 const corsOptions = {
   credentials: true,
@@ -40,19 +42,9 @@ const corsOptions = {
 
 //middlewarres
 app.use(cors(corsOptions));
-app.use(cookieParser("auth", { httpOnly: true }));
-app.get("/", (req, res) => {
-  res.cookie("exampleCookie", "exampleValue", {
-    maxAge: 24 * 60 * 60 * 1000, // Expires in 24 hours
-    httpOnly: true, // Make the cookie accessible only via HTTP
-    secure: true, // Only send the cookie over HTTPS
-    sameSite: "None", // Allow cross-site or third-party cookies
-  });
-  res.send("cookie set");
-  console.log("saving");
-  console.log(req.cookies);
-});
+app.use(cookieParser());
 app.use(bodyParser.json({ limit: "25mb" }));
+
 app.use((req, res, next) => {
   const isRegisterEndpoint = req.url === "/users" && req.method === "POST";
   if (isRegisterEndpoint) {

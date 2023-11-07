@@ -5,16 +5,6 @@ const Post = require("../models/Post");
 const cloudinary = require("../utils/cloudinary");
 const Notification = require("../models/Notification");
 const Friend = require("../models/Friend");
-
-// router.get("/", async (req, res) => {
-//   try {
-//     const users = await User.find();
-//     res.json(users);
-//   } catch (error) {
-//     res.json({ message: error });
-//   }
-// });
-
 router.post("/", async (req, res) => {
   console.log("creando");
   const user = new User({
@@ -30,12 +20,10 @@ router.post("/", async (req, res) => {
 
     if (!userFinded) {
       user.save();
-      res.json(user);
+      res.status(200).json(user);
     }
 
-    res.json(userFinded);
-
-    // res.status(204).send();
+    res.status(200).json(userFinded);
   } catch (error) {
     console.log(error.message);
   }
