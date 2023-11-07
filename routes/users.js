@@ -94,6 +94,7 @@ router.get("/", async (req, res) => {
     notification.photoURL = notificationUser.photoURL;
   });
 
+  console.log("lalala");
   try {
     res.json([user, notifications, friendsDataJSON]);
   } catch (error) {

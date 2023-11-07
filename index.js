@@ -41,8 +41,8 @@ const corsOptions = {
 };
 
 //middlewarres
-app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "25mb" }));
 
 app.use((req, res, next) => {
