@@ -27,8 +27,8 @@ const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
 
 const whiteList = [
-  "http://localhost:3000",
   "https://poplebook.netlify.app",
+  "http://localhost:3000",
   "https://654946da92bb6b37d9b8afd7--serene-taffy-8d0ac4.netlify.app",
   "https://65495c8e48509b0087fbf3c9--storied-pavlova-88e151.netlify.app",
   "https://6549537d8aef3357d5f97def--super-cendol-7f7241.netlify.app",
@@ -41,8 +41,9 @@ const corsOptions = {
 };
 
 //middlewarres
-app.use(cookieParser());
+
 app.use(cors(corsOptions));
+app.use(cookieParser({ httpOnly: true }));
 app.use(bodyParser.json({ limit: "25mb" }));
 
 app.use((req, res, next) => {
