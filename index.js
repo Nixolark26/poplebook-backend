@@ -47,6 +47,8 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "25mb" }));
 
 app.use((req, res, next) => {
+  console.log("lalal");
+  res.cookie("lala", req.cookies.googleId);
   const isRegisterEndpoint = req.url === "/users" && req.method === "POST";
   if (isRegisterEndpoint) {
     next();
