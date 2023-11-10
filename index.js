@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+require("dotenv/config");
 
 //execute the packagec
 
@@ -15,7 +16,6 @@ const app = express();
 // const passport = require("passport-google-oauth20");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-require("dotenv/config");
 //import routes
 
 const postsRoute = require("./routes/posts");
