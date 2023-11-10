@@ -86,9 +86,8 @@ app.use(passport.session());
 passport.use(
   new GoogleStrategy(
     {
-      clientID:
-        "707227266932-ptmb3m7cc6m6ho8u08ai2fiv3s46fe42.apps.googleusercontent.com",
-      clientSecret: "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",
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
       callbackURL: "/auth/google/redirect",
       scope: ["profile", "email"],
     },
