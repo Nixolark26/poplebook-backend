@@ -12,6 +12,9 @@ const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 5000;
 
 const app = express();
+// const passport = require("passport-google-oauth20");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require("dotenv/config");
 //import routes
 
@@ -25,7 +28,6 @@ const commentsRoute = require("./routes/comments");
 const photosRoute = require("./routes/photos");
 const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
-
 const whiteList = [
   "https://poplebook.netlify.app",
   "http://localhost:3000",
@@ -39,27 +41,119 @@ const corsOptions = {
   credentials: true,
   origin: whiteList,
 };
+const frontURL = "https://poplebook.netlify.app/";
 
 //middlewarres
 
+app.use(cors());
 app.use(cookieParser());
 app.use(cors(corsOptions));
+
 app.use(bodyParser.json({ limit: "25mb" }));
 
 app.use((req, res, next) => {
-  console.log("lalal");
-  res.cookie("lala", req.cookies.googleId);
-  const isRegisterEndpoint = req.url === "/users" && req.method === "POST";
+  console.log(req.cookies);
+  console.log(req.url);
+  const isRegisterEndpoint =
+    req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
+
+  console.log();
   if (isRegisterEndpoint) {
+    console.log("next");
     next();
     return;
   }
-  console.log(req.cookies);
 
   const googleID = req?.cookies?.googleId;
   if (!googleID) return res.status(401).json({ message: "Unauthorized" });
   next();
 });
+
+//
+
+const User = require("./models/User");
+const CookieSession = require("cookie-session");
+
+app.use(
+  CookieSession({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [process.env.COOKIE_SECRET],
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+      callbackURL: "/auth/google/redirect",
+      scope: ["profile", "email"],
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      User.findOrCreate(
+        {
+          googleID: profile.id,
+          name: profile.displayName,
+          photoURL:
+            "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg",
+        },
+        function (err, user) {
+          return cb(err, user);
+        }
+      );
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => {
+    done(null, user);
+  });
+});
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+  })
+);
+
+app.get(
+  "/auth/google/redirect",
+  passport.authenticate("google"),
+  function (req, res) {
+    console.log(req.user);
+    res.cookie("googleId", req.user.googleID, {
+      secure: true,
+      sameSite: "none",
+    });
+    console.log("cookies", req.cookies);
+    res.redirect(frontURL);
+    res.send("nice");
+  }
+);
+
+app.get("/auth/logout", function (req, res, next) {
+  req.session = null;
+  res.clearCookie("googleId");
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    // res.send(req.user.displayName);
+  });
+  res.redirect(frontURL);
+});
+
+//
 
 app.use("/users", usersRoute);
 app.use("/posts", postsRoute);

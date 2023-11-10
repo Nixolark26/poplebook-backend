@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const findOrCreate = require("mongoose-findorcreate");
 
 const UserSchema = mongoose.Schema({
   name: {
@@ -10,14 +11,6 @@ const UserSchema = mongoose.Schema({
     required: true,
   },
 
-  creationTime: {
-    type: String,
-    required: true,
-  },
-  lastSignInTime: {
-    type: String,
-    required: true,
-  },
   photoURL: {
     type: String,
     required: true,
@@ -27,5 +20,7 @@ const UserSchema = mongoose.Schema({
     required: false,
   },
 });
+
+UserSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model("Users", UserSchema);

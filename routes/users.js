@@ -5,6 +5,7 @@ const Post = require("../models/Post");
 const cloudinary = require("../utils/cloudinary");
 const Notification = require("../models/Notification");
 const Friend = require("../models/Friend");
+
 router.post("/", async (req, res) => {
   console.log("creando");
   const user = new User({
