@@ -27,18 +27,10 @@ const commentsRoute = require("./routes/comments");
 const photosRoute = require("./routes/photos");
 const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
-const whiteList = [
-  "https://poplebook.netlify.app",
-  "http://localhost:3000",
-  "https://654946da92bb6b37d9b8afd7--serene-taffy-8d0ac4.netlify.app",
-  "https://65495c8e48509b0087fbf3c9--storied-pavlova-88e151.netlify.app",
-  "https://6549537d8aef3357d5f97def--super-cendol-7f7241.netlify.app",
-  "https://654a4a9f1aa1093748a91cc7--cheerful-kashata-d27ea7.netlify.app",
-  "https://654a49a371ad243616ea1599--stupendous-cat-edfc31.netlify.app",
-];
+
 const corsOptions = {
   credentials: true,
-  origin: whiteList,
+  origin: "http://localhost:3000",
 };
 const frontURL = "https://poplebook.netlify.app/";
 
