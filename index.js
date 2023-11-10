@@ -1,21 +1,20 @@
 //import package
 
 const express = require("express");
+require("dotenv").config();
 
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-require("dotenv/config");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 //execute the packagec
 
 const port = process.env.PORT || 5000;
 
 const app = express();
-// const passport = require("passport-google-oauth20");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 //import routes
 
 const postsRoute = require("./routes/posts");
