@@ -36,9 +36,8 @@ const frontURL = "https://poplebook.netlify.app/";
 
 //middlewarres
 
-app.use(cors());
-app.use(cookieParser());
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use(bodyParser.json({ limit: "25mb" }));
 
