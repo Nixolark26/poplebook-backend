@@ -30,7 +30,7 @@ const notificationsRoute = require("./routes/notifications");
 
 const corsOptions = {
   credentials: true,
-  origin: "http://localhost:3000",
+  origin: "https://poplebook.netlify.app",
 };
 const frontURL = "https://poplebook.netlify.app/";
 
