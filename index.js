@@ -28,11 +28,14 @@ const photosRoute = require("./routes/photos");
 const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
 
+// const frontURL = "https://poplebook.netlify.app";
+const frontURL = "http://localhost:3000";
+
+const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
 const corsOptions = {
   credentials: true,
-  origin: "https://poplebook.netlify.app",
+  origin: frontURL,
 };
-const frontURL = "https://poplebook.netlify.app/";
 
 //middlewarres
 
@@ -139,7 +142,6 @@ app.get("/auth/logout", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    // res.send(req.user.displayName);
   });
   res.redirect(frontURL);
 });
