@@ -68,7 +68,7 @@ router.get("/", async (req, res) => {
   //ADDING LIKES
   const likes = await Like.find({ postID: allLikesIds });
   allPosts.forEach((post) => {
-    post.likes = likes.filter((like) => post.postID === like.postID);
+    post.like.push(likes.filter((like) => post.postID === like.postID));
   });
   //ADDING REFERENCE POSTS
   const referencePosts = await Post.find({
