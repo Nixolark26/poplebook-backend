@@ -75,7 +75,7 @@ router.get("/post/:postId", async (req, res) => {
 
     post.comments.show = false;
 
-    if (likes) post.likes = likes;
+    if (likes) post.likes.push(likes);
 
     res.json(post);
   } catch (error) {
@@ -139,7 +139,7 @@ router.get("/:postId", async (req, res) => {
     const publishers = await User.find({ googleID: publishersIDs });
     postsProfile.forEach((post) => {
       post.publisher = profilePublisher;
-      post.likes = likes.filter((like) => like.postID === post.postID);
+      post.likes.push(likes.filter((like) => like.postID === post.postID));
       if (post?.referencePostID) {
         post.referencePost = referencePosts.find(
           (referencePost) => referencePost.postID === post.referencePostID
