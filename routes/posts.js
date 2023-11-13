@@ -45,6 +45,7 @@ router.get("/post/:postId", async (req, res) => {
       path: "post/" + req.params.postId,
       addresseeID: req.cookies.googleId,
     });
+    console.log(removedPost);
   }
 
   const post = await Post.findOne({ postID: req.params.postId });
@@ -62,9 +63,10 @@ router.get("/post/:postId", async (req, res) => {
 
     post.comments = await Comment.find({
       postID: req.params.postId,
-    }).limit(5);
+    }).limit(3);
+
     for (let i = 0; i < post.comments.length; i++) {
-      if (post.comments[i].comments.length > 0) {
+      if (post.comments.length > 0) {
         post.comments[i].commenter = await User.findOne({
           googleID: post.comments[i].commenterID,
         });
@@ -85,13 +87,11 @@ router.get("/:postId", async (req, res) => {
   const page = params[1];
   let skip = (page - 1) * 3;
   let limit = 3;
-
-  //
   const isThereNotification = await Notification.find({
     path: params[0],
     addresseeID: req.cookies.googleId,
   });
-  console.log(isThereNotification);
+
   if (isThereNotification.length > 0) {
     console.log("no saving");
     const removedPost = await Notification.deleteMany({
@@ -101,7 +101,6 @@ router.get("/:postId", async (req, res) => {
     console.log(removedPost);
   }
 
-  //
   if (userId === "currentUser") userId = req.cookies.googleId;
 
   const profilePublisher = await User.findOne({ googleID: userId });

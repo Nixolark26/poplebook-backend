@@ -67,14 +67,8 @@ router.post("/", async (req, res) => {
 
 router.get("/:commentId", async (req, res) => {
   const params = req.params.commentId.split("-");
-  console.log(params);
-  let skip = (params[1] - 1) * 3 + 1;
+  let skip = params[1] * 3;
   let limit = 3;
-  console.log(params[1] == 1, params[1]);
-  if (params[1] == 1) {
-    console.log(true);
-    skip = 1;
-  }
 
   try {
     const comments = await Comment.find({ postID: params[0] })
@@ -87,9 +81,10 @@ router.get("/:commentId", async (req, res) => {
       comment.commenter = commenters.find(
         (user) => user.googleID == comment.commenterID
       );
-      comment.show = false;
     });
+
     if (comments == undefined) comments = [];
+
     res.json(comments);
   } catch (error) {
     res.json({ message: error });

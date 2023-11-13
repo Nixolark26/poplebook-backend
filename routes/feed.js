@@ -53,7 +53,7 @@ router.get("/", async (req, res) => {
 
     allPosts[i].comments = await Comment.find({
       postID: allPosts[i].postID,
-    }).limit(1);
+    }).limit(3);
     if (allPosts[i].comments.length > 0) {
       allPosts[i].comments[0].commenter = await User.findOne({
         googleID: allPosts[i].comments[0].commenterID,
