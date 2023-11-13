@@ -33,7 +33,7 @@ const frontURL = "https://poplebook.netlify.app";
 
 const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
 const corsOptions = {
-  // credentials: true,
+  credentials: true,
   origin: whiteList,
 };
 
