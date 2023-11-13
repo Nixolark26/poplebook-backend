@@ -34,9 +34,6 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/post/:postId", async (req, res) => {
-  // DELETING NOTIFICATIONS
-
-  console.log(req.params.postId);
   const isThereNotification = await Notification.find({
     path: "post/" + req.params.postId,
     addresseeID: req.cookies.googleId,
@@ -48,17 +45,7 @@ router.get("/post/:postId", async (req, res) => {
       path: "post/" + req.params.postId,
       addresseeID: req.cookies.googleId,
     });
-    console.log(removedPost);
-    // await Notification.updateOne(
-    //   {
-    //     path: notification.path,
-    //     addresseeID: req.body.addresseeID,
-    //     type: "Comment",
-    //   },
-    //   { $set: { viewed: false, notificationID: Date.now() } }
-    // );
   }
-  //
 
   const post = await Post.findOne({ postID: req.params.postId });
   const likes = await Like.find({ postID: req.params.postId });
@@ -73,7 +60,16 @@ router.get("/post/:postId", async (req, res) => {
         googleID: post.referencePost.publisherID,
       });
 
-    post.comments.show = false;
+    post.comments = await Comment.find({
+      postID: req.params.postId,
+    }).limit(5);
+    for (let i = 0; i < post.comments.length; i++) {
+      if (post.comments[i].comments.length > 0) {
+        post.comments[i].commenter = await User.findOne({
+          googleID: post.comments[i].commenterID,
+        });
+      }
+    }
 
     if (likes) post.likes.push(likes);
 
