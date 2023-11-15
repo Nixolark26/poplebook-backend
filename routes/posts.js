@@ -14,6 +14,7 @@ router.post("/", async (req, res) => {
     content: req.body.content,
     postID: req.body.postID,
     sharerID: req.body.sharerID,
+    likes: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   });
   if (req.body.publisherID) post.publisherID = req.body.publisherID;
   if (req.body.referencePostID) post.referencePostID = req.body.referencePostID;
@@ -73,7 +74,10 @@ router.get("/post/:postId", async (req, res) => {
       }
     }
 
-    if (likes) post.likes.push(likes);
+    if (likes) {
+      console.log("adding Likes");
+      post.likes.push(...likes);
+    }
 
     res.json(post);
   } catch (error) {
@@ -102,7 +106,8 @@ router.get("/:postId", async (req, res) => {
   }
 
   if (userId === "currentUser") userId = req.cookies.googleId;
-
+  console.log(userId);
+  console.log(req.cookies);
   const profilePublisher = await User.findOne({ googleID: userId });
   try {
     let postsProfile = await Post.find({
@@ -134,7 +139,9 @@ router.get("/:postId", async (req, res) => {
     const publishers = await User.find({ googleID: publishersIDs });
     postsProfile.forEach((post) => {
       post.publisher = profilePublisher;
-      post.likes.push(likes.filter((like) => like.postID === post.postID));
+      const likesToPush = likes.filter((like) => like.postID === post.postID);
+      console.log(likesToPush);
+      post.likes.push(...likesToPush);
       if (post?.referencePostID) {
         post.referencePost = referencePosts.find(
           (referencePost) => referencePost.postID === post.referencePostID

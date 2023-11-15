@@ -91,8 +91,11 @@ router.get("/", async (req, res) => {
     const notificationUser = friendsDataJSON.find(
       (friend) => notification.friendID === friend.senderID
     );
-    notification.name = notificationUser.name;
-    notification.photoURL = notificationUser.photoURL;
+    console.log(notificationUser);
+    if (notificationUser) {
+      notification.name = notificationUser.name;
+      notification.photoURL = notificationUser.photoURL;
+    }
   });
 
   console.log("lalala");

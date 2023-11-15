@@ -48,6 +48,10 @@ const PostSchema = mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  popular: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("Posts", PostSchema);

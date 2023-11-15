@@ -15,10 +15,20 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  console.log("save");
   const like = new Like({
     postID: req.body.postID,
     likerID: req.cookies.googleId,
   });
+  const likesLength = req.body.likes;
+  if (likesLength === 9) {
+    console.log("popular");
+    await Post.updateOne(
+      { postID: req.body.postID },
+      { $set: { popular: true } }
+    );
+  }
+
   const currentLike = await Like.findOne({
     postID: req.body.postID,
     likerID: req.cookies.googleId,

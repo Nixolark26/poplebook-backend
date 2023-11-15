@@ -7,7 +7,7 @@ const Like = require("../models/Like");
 const Impression = require("../models/Impression");
 const Comment = require("../models/Comment");
 
-router.get("/", async (req, res) => {
+router.get("/:page", async (req, res) => {
   const googleID = req.cookies.googleId;
   const viewedPosts = await Impression.find({ viewerID: googleID });
   const viewedPostsIDs = viewedPosts.map((IDs) => (IDs = IDs.postID));
@@ -32,13 +32,29 @@ router.get("/", async (req, res) => {
       friendsIDs[i] = friendsIDs[i].addresseeID;
     }
   }
+  // const cutoff = new Date();
+  // const currentDate = Date.now();
+  // cutoff.setDate(cutoff.getDate() - 5);
+  // postID: { $gt: currentDate - 8640000, $lt: currentDate },
+  const page = (req.params.page - 1) * 3;
+
+  const popularPosts = await Post.find({
+    popular: true,
+    publisherID: { $nin: req.cookies.googleId },
+  })
+
+    .sort({ postID: "desc" })
+    .skip(page)
+    .limit(3);
 
   const allPosts = await Post.find({
     publisherID: friendsIDs,
     postID: { $nin: viewedPostsIDs },
   })
     .sort({ postID: "desc" })
-    .limit(10);
+    .limit(7);
+
+  allPosts.push(...popularPosts);
 
   if (allPosts.length === 0) {
     res.json([allPosts]);
@@ -47,17 +63,23 @@ router.get("/", async (req, res) => {
 
   const allLikesIds = [];
   const allReferencePostsIds = [];
-  console.log("get");
+
   for (let i = 0; i < allPosts.length; i++) {
     allLikesIds.push(allPosts[i].postID);
-
-    allPosts[i].comments = await Comment.find({
+    const postComments = await Comment.find({
       postID: allPosts[i].postID,
     }).limit(3);
+    allPosts[i].comments.push(...postComments);
+
     if (allPosts[i].comments.length > 0) {
-      allPosts[i].comments[0].commenter = await User.findOne({
-        googleID: allPosts[i].comments[0].commenterID,
-      });
+      for (let j = 0; j < allPosts[i].comments.length; j++) {
+        console.log(allPosts[i].comments[j]);
+        if (allPosts[i].comments[j].commenterID) {
+          allPosts[i].comments[j].commenter = await User.findOne({
+            googleID: allPosts[i].comments[j].commenterID,
+          });
+        }
+      }
     }
 
     if (allPosts[i].referencePostID) {
@@ -66,11 +88,15 @@ router.get("/", async (req, res) => {
   }
 
   //ADDING LIKES
+
   const likes = await Like.find({ postID: allLikesIds });
   allPosts.forEach((post) => {
-    post.like.push(likes.filter((like) => post.postID === like.postID));
+    const likesToPush = likes.filter((like) => post.postID === like?.postID);
+    post.likes.push(...likesToPush);
   });
+
   //ADDING REFERENCE POSTS
+
   const referencePosts = await Post.find({
     postID: allReferencePostsIds,
   });
@@ -151,8 +177,3 @@ var groupBy = function (xs, key) {
 // console.log("limit", limit);
 // // .skip(skip)
 // .limit(limit);
-
-// const cutoff = new Date();
-// const currentDate = Date.now();
-// cutoff.setDate(cutoff.getDate() - 5);
-// postID: { $gt: currentDate - 8640000, $lt: currentDate },
