@@ -33,7 +33,7 @@ const frontURL = "https://poplebook.netlify.app";
 
 const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
 const corsOptions = {
-  // credentials: true,
+  credentials: true,
   origin: whiteList,
 };
 
@@ -44,23 +44,23 @@ app.use(cookieParser());
 
 app.use(bodyParser.json({ limit: "25mb" }));
 
-// app.use((req, res, next) => {
-//   console.log(req.cookies);
-//   console.log(req.url);
-//   const isRegisterEndpoint =
-//     req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
+app.use((req, res, next) => {
+  console.log(req.cookies);
+  console.log(req.url);
+  const isRegisterEndpoint =
+    req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
 
-//   console.log();
-//   if (isRegisterEndpoint) {
-//     console.log("next");
-//     next();
-//     return;
-//   }
+  console.log();
+  if (isRegisterEndpoint) {
+    console.log("next");
+    next();
+    return;
+  }
 
-//   const googleID = req?.cookies?.googleId;
-//   if (!googleID) return res.status(401).json({ message: "Unauthorized" });
-//   next();
-// });
+  const googleID = req?.cookies?.googleId;
+  if (!googleID) return res.status(401).json({ message: "Unauthorized" });
+  next();
+});
 
 //
 
