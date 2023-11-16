@@ -29,7 +29,6 @@ const impressionsRoute = require("./routes/impressions");
 const notificationsRoute = require("./routes/notifications");
 
 const frontURL = "https://poplebook.netlify.app";
-// const frontURL = "http://localhost:3000";
 
 const whiteList = ["http://localhost:3000", "https://poplebook.netlify.app"];
 const corsOptions = {
@@ -45,14 +44,10 @@ app.use(cookieParser());
 app.use(bodyParser.json({ limit: "25mb" }));
 
 app.use((req, res, next) => {
-  console.log(req.cookies);
-  console.log(req.url);
   const isRegisterEndpoint =
     req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
 
-  console.log();
   if (isRegisterEndpoint) {
-    console.log("next");
     next();
     return;
   }
@@ -87,15 +82,9 @@ passport.use(
       scope: ["profile", "email"],
     },
     function (accessToken, refreshToken, profile, cb) {
-      User.findOrCreate(
-        {
-          googleID: profile.id,
-          name: profile.displayName,
-        },
-        function (err, user) {
-          return cb(err, user);
-        }
-      );
+      findOrCreateUserFunc(profile, function (err, user) {
+        return cb(err, user);
+      });
     }
   )
 );
@@ -169,3 +158,35 @@ mongoose.connect(process.env.DB_CONNECTION);
 
 //how to we start listening to the server
 app.listen(port);
+
+function findOrCreateUserFunc(profile, cb) {
+  User.findOne({ googleID: profile.id }, (err, existingUser) => {
+    if (err) {
+      return cb(err);
+    }
+
+    if (existingUser) {
+      // Check if the name has changed
+      if (existingUser.name !== profile.displayName) {
+        console.log("Name has changed, but skipping update.");
+        return cb(null, existingUser);
+      } else {
+        // Name hasn't changed, return existing user
+        return cb(null, existingUser);
+      }
+    } else {
+      // Create a new user
+      const newUser = new User({
+        googleID: profile.id,
+        name: profile.displayName,
+      });
+
+      newUser.save((err) => {
+        if (err) {
+          return cb(err);
+        }
+        return cb(null, newUser);
+      });
+    }
+  });
+}
