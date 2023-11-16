@@ -82,9 +82,13 @@ passport.use(
       scope: ["profile", "email"],
     },
     function (accessToken, refreshToken, profile, cb) {
-      findOrCreateUserFunc(profile, function (err, user) {
-        return cb(err, user);
-      });
+      User.findOrCreate(
+        { googleID: profile.id },
+        { name: profile.displayName },
+        function (err, user) {
+          return cb(err, user);
+        }
+      );
     }
   )
 );
@@ -158,31 +162,3 @@ mongoose.connect(process.env.DB_CONNECTION);
 
 //how to we start listening to the server
 app.listen(port);
-
-async function findOrCreateUserFunc(profile, cb) {
-  const existingUser = await User.findOne({ googleID: profile.id });
-  if (err) {
-    return cb(err);
-  }
-
-  if (existingUser) {
-    if (existingUser.name !== profile.displayName) {
-      console.log("Name has changed, but skipping update.");
-      return cb(null, existingUser);
-    } else {
-      return cb(null, existingUser);
-    }
-  } else {
-    const newUser = new User({
-      googleID: profile.id,
-      name: profile.displayName,
-    });
-
-    newUser.save((err) => {
-      if (err) {
-        return cb(err);
-      }
-      return cb(null, newUser);
-    });
-  }
-}
