@@ -188,6 +188,7 @@ router.get("/my-friends/", async (req, res) => {
 
 //RELATIONSHIP
 router.get("/:FriendId", async (req, res) => {
+  console.log("here");
   const friendId = req.params.FriendId;
   try {
     let friend = await Friend.findOne({
@@ -207,22 +208,26 @@ router.get("/:FriendId", async (req, res) => {
       ],
     });
 
-    if (friend?.requesterID === req.cookies.googleId) {
-      friend = {
-        request: friend.request,
-        sender: true,
-        friendID: friend.addresseeID,
-      };
-    } else {
-      friend = {
-        request: friend.request,
-        sender: false,
-        friendID: friend.requesterID,
-      };
+    console.log(friend);
+    if (friend) {
+      if (friend?.requesterID === req.cookies.googleId) {
+        friend = {
+          request: friend.request,
+          sender: true,
+          friendID: friend.addresseeID,
+        };
+      } else {
+        friend = {
+          request: friend.request,
+          sender: false,
+          friendID: friend.requesterID,
+        };
+      }
     }
 
     res.json([friend, profileFriendsLength]);
   } catch (error) {
+    console.log(error);
     res.json({ message: error });
   }
 });
