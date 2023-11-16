@@ -13,7 +13,7 @@ const UserSchema = mongoose.Schema({
 
   photoURL: {
     type: String,
-    required: true,
+    required: false,
   },
   coverURL: {
     type: String,
