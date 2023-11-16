@@ -6,6 +6,7 @@ const Like = require("../models/Like");
 const Comment = require("../models/Comment");
 const cloudinary = require("../utils/cloudinary");
 const Notification = require("../models/Notification");
+const Friend = require("../models/Friend");
 
 router.post("/", async (req, res) => {
   const image = req.body.postIMG;
@@ -91,6 +92,7 @@ router.get("/:postId", async (req, res) => {
   const page = params[1];
   let skip = (page - 1) * 3;
   let limit = 3;
+
   const isThereNotification = await Notification.find({
     path: params[0],
     addresseeID: req.cookies.googleId,

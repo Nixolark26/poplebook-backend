@@ -207,8 +207,7 @@ router.get("/:FriendId", async (req, res) => {
       ],
     });
 
-    if (!friend) return;
-    if (friend.requesterID === req.cookies.googleId) {
+    if (friend?.requesterID === req.cookies.googleId) {
       friend = {
         request: friend.request,
         sender: true,
