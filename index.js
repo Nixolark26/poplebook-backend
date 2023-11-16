@@ -159,34 +159,30 @@ mongoose.connect(process.env.DB_CONNECTION);
 //how to we start listening to the server
 app.listen(port);
 
-function findOrCreateUserFunc(profile, cb) {
-  User.findOne({ googleID: profile.id }, (err, existingUser) => {
-    if (err) {
-      return cb(err);
-    }
+async function findOrCreateUserFunc(profile, cb) {
+  const existingUser = await User.findOne({ googleID: profile.id });
+  if (err) {
+    return cb(err);
+  }
 
-    if (existingUser) {
-      // Check if the name has changed
-      if (existingUser.name !== profile.displayName) {
-        console.log("Name has changed, but skipping update.");
-        return cb(null, existingUser);
-      } else {
-        // Name hasn't changed, return existing user
-        return cb(null, existingUser);
-      }
+  if (existingUser) {
+    if (existingUser.name !== profile.displayName) {
+      console.log("Name has changed, but skipping update.");
+      return cb(null, existingUser);
     } else {
-      // Create a new user
-      const newUser = new User({
-        googleID: profile.id,
-        name: profile.displayName,
-      });
-
-      newUser.save((err) => {
-        if (err) {
-          return cb(err);
-        }
-        return cb(null, newUser);
-      });
+      return cb(null, existingUser);
     }
-  });
+  } else {
+    const newUser = new User({
+      googleID: profile.id,
+      name: profile.displayName,
+    });
+
+    newUser.save((err) => {
+      if (err) {
+        return cb(err);
+      }
+      return cb(null, newUser);
+    });
+  }
 }
