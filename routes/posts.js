@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
     content: req.body.content,
     postID: req.body.postID,
     sharerID: req.body.sharerID,
-    likes: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    // likes: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   });
   if (req.body.publisherID) post.publisherID = req.body.publisherID;
   if (req.body.referencePostID) post.referencePostID = req.body.referencePostID;

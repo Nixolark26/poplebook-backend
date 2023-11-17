@@ -119,6 +119,8 @@ app.get(
     res.cookie("googleId", req.user.googleID, {
       secure: true,
       sameSite: "none",
+      maxAge: 900000,
+      httpOnly: true,
     });
     console.log("cookies", req.cookies);
     res.redirect(frontURL);

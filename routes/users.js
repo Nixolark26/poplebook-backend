@@ -49,13 +49,14 @@ router.get("/search/:userId", async (req, res) => {
 router.get("/", async (req, res) => {
   const googleID = req.cookies.googleId;
 
-  console.log("googleID " + googleID);
-
   const user = await User.findOne({ googleID });
 
   //
   let friends = await Friend.find({
-    $or: [{ requesterID: googleID }, { addresseeID: googleID }],
+    $or: [
+      { requesterID: googleID, request: true },
+      { addresseeID: googleID, request: true },
+    ],
   });
 
   const friendsIDs = [];
