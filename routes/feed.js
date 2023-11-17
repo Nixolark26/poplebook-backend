@@ -56,16 +56,16 @@ router.get("/:page", async (req, res) => {
 
   allPosts.push(...popularPosts);
 
-  function compare(a, b) {
-    if (a.postID > b.postID) {
-      return -1;
-    }
-    if (a.postID < b.postID) {
-      return 1;
-    }
-    return 0;
-  }
-  allPosts.sort(compare);
+  // function compare(a, b) {
+  //   if (a.postID > b.postID) {
+  //     return -1;
+  //   }
+  //   if (a.postID < b.postID) {
+  //     return 1;
+  //   }
+  //   return 0;
+  // }
+  // allPosts.sort(compare);
 
   if (allPosts.length === 0) {
     res.json([allPosts]);
