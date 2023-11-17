@@ -43,19 +43,19 @@ app.use(cookieParser());
 
 app.use(bodyParser.json({ limit: "25mb" }));
 
-// app.use((req, res, next) => {
-//   const isRegisterEndpoint =
-//     req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
+app.use((req, res, next) => {
+  const isRegisterEndpoint =
+    req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
 
-//   if (isRegisterEndpoint) {
-//     next();
-//     return;
-//   }
+  if (isRegisterEndpoint) {
+    next();
+    return;
+  }
 
-//   const googleID = req?.cookies?.googleId;
-//   if (!googleID) return res.status(401).json({ message: "Unauthorized" });
-//   next();
-// });
+  const googleID = req?.cookies?.googleId;
+  if (!googleID) return res.status(401).json({ message: "Unauthorized" });
+  next();
+});
 
 //
 
