@@ -47,11 +47,15 @@ router.get("/:page", async (req, res) => {
     .skip(page)
     .limit(3);
 
+  const skipFriends = (req.params.page - 1) * 7;
+  const popularPostIDs = popularPosts.map((post) => post.postID);
+
   const allPosts = await Post.find({
     publisherID: friendsIDs,
-    postID: { $nin: viewedPostsIDs },
+    postID: { $nin: [...viewedPostsIDs, ...popularPostIDs] },
   })
     .sort({ postID: "desc" })
+    .skip(skipFriends)
     .limit(7);
 
   allPosts.push(...popularPosts);
