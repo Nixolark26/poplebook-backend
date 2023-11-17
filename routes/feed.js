@@ -53,6 +53,8 @@ router.get("/:page", async (req, res) => {
   const allPosts = await Post.find({
     publisherID: friendsIDs,
     postID: { $nin: [...viewedPostsIDs, ...popularPostIDs] },
+
+    popular: { $ne: true },
   })
     .sort({ postID: "desc" })
     .skip(skipFriends)
