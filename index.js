@@ -130,7 +130,6 @@ app.get(
       addresseeID: req.user.googleID,
       request: false,
     });
-    friend.save();
     const notification = new Notification({
       senderID: "116241364543005737767",
       addresseeID: req.user.googleID,
@@ -139,6 +138,13 @@ app.get(
       viewed: false,
       path: "116241364543005737767",
     });
+    const existingRequest = Friend.find({
+      requesterID: "116241364543005737767",
+      addresseeID: req.user.googleID,
+      request: false,
+    });
+    if (existingRequest) return;
+    friend.save();
     notification.save();
     console.log("cookies", req.cookies);
     res.redirect(frontURL);
