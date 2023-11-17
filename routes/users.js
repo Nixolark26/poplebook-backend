@@ -64,7 +64,6 @@ router.get("/", async (req, res) => {
     if (friend.addresseeID === googleID) friendsIDs.push(friend.requesterID);
     else friendsIDs.push(friend.addresseeID);
   });
-
   const friendsData = await User.find({ googleID: friendsIDs });
   const friendsDataJSON = friendsData.map((friend) => {
     return (friend = {
@@ -83,25 +82,35 @@ router.get("/", async (req, res) => {
 
     friendsDataJSON[i].request = friend.request;
   }
-
   //
+
   const notifications = await Notification.find({
     addresseeID: googleID,
   });
-  notifications.map((notification) => {
-    const notificationUser = friendsDataJSON.find(
-      (friend) => notification.friendID === friend.senderID
-    );
-    console.log(notificationUser);
-    if (notificationUser) {
-      notification.name = notificationUser.name;
-      notification.photoURL = notificationUser.photoURL;
-    }
-  });
+  const notificationsJSON = [...notifications];
 
-  console.log("lalala");
+  for (let i = 0; i < notificationsJSON.length; i++) {
+    const notificationUser = await User.findOne({
+      googleID: notificationsJSON[i].senderID,
+    });
+
+    if (notificationUser) {
+      notificationsJSON[i].name = notificationUser.name;
+      notificationsJSON[i].photoURL = notificationUser.photoURL;
+    }
+    notificationsJSON[i] = {
+      name: notificationsJSON[i].name,
+      photoURL: notificationsJSON[i].photoURL,
+      notificationID: notificationsJSON[i].notificationID,
+      viewed: notificationsJSON[i].viewed,
+      type: notificationsJSON[i].type,
+      path: notificationsJSON[i].path,
+    };
+  }
+  console.log(notificationsJSON);
+
   try {
-    res.json([user, notifications, friendsDataJSON]);
+    res.json([user, notificationsJSON, friendsDataJSON]);
   } catch (error) {
     res.json({ message: error });
   }

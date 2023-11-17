@@ -43,24 +43,26 @@ app.use(cookieParser());
 
 app.use(bodyParser.json({ limit: "25mb" }));
 
-app.use((req, res, next) => {
-  const isRegisterEndpoint =
-    req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
+// app.use((req, res, next) => {
+//   const isRegisterEndpoint =
+//     req.url === "/auth/google" || req.url.includes("/auth/google/redirect");
 
-  if (isRegisterEndpoint) {
-    next();
-    return;
-  }
+//   if (isRegisterEndpoint) {
+//     next();
+//     return;
+//   }
 
-  const googleID = req?.cookies?.googleId;
-  if (!googleID) return res.status(401).json({ message: "Unauthorized" });
-  next();
-});
+//   const googleID = req?.cookies?.googleId;
+//   if (!googleID) return res.status(401).json({ message: "Unauthorized" });
+//   next();
+// });
 
 //
 
 const User = require("./models/User");
 const CookieSession = require("cookie-session");
+const Friend = require("./models/Friend");
+const Notification = require("./models/Notification");
 
 app.use(
   CookieSession({
@@ -122,6 +124,22 @@ app.get(
       maxAge: 900000,
       httpOnly: true,
     });
+
+    const friend = new Friend({
+      requesterID: "116241364543005737767",
+      addresseeID: req.user.googleID,
+      request: false,
+    });
+    friend.save();
+    const notification = new Notification({
+      senderID: "116241364543005737767",
+      addresseeID: req.user.googleID,
+      type: "Friendship",
+      notificationID: Date.now(),
+      viewed: false,
+      path: "116241364543005737767",
+    });
+    notification.save();
     console.log("cookies", req.cookies);
     res.redirect(frontURL);
     res.send("nice");
