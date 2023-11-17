@@ -143,9 +143,10 @@ app.get(
       addresseeID: req.user.googleID,
       request: false,
     });
-    if (existingRequest) return;
-    friend.save();
-    notification.save();
+    if (!existingRequest) {
+      friend.save();
+      notification.save();
+    }
     console.log("cookies", req.cookies);
     res.redirect(frontURL);
     res.send("nice");
