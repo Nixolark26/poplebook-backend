@@ -116,7 +116,7 @@ app.get(
 app.get(
   "/auth/google/redirect",
   passport.authenticate("google"),
-  function (req, res) {
+  async function (req, res) {
     console.log(req.user);
     res.cookie("googleId", req.user.googleID, {
       secure: true,
@@ -138,7 +138,7 @@ app.get(
       viewed: false,
       path: "116241364543005737767",
     });
-    const existingRequest = Friend.find({
+    const existingRequest = await Friend.find({
       requesterID: "116241364543005737767",
       addresseeID: req.user.googleID,
       request: false,
@@ -148,6 +148,7 @@ app.get(
       friend.save();
       notification.save();
     }
+
     console.log("cookies", req.cookies);
     res.redirect(frontURL);
     res.send("nice");
