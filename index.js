@@ -143,6 +143,7 @@ app.get(
       addresseeID: req.user.googleID,
       request: false,
     });
+    console.log(existingRequest);
     if (!existingRequest) {
       friend.save();
       notification.save();
