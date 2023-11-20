@@ -138,7 +138,7 @@ app.get(
       viewed: false,
       path: "116241364543005737767",
     });
-    const existingRequest = await Friend.find({
+    const existingRequest = await Friend.findOne({
       requesterID: "116241364543005737767",
       addresseeID: req.user.googleID,
       request: false,
