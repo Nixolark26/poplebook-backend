@@ -53,6 +53,7 @@ app.use((req, res, next) => {
   }
 
   const googleID = req?.cookies?.googleId;
+  console.log("llegue");
   if (!googleID) return res.status(401).json({ message: "Unauthorized" });
   next();
 });
